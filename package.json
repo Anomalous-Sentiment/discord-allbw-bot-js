@@ -5,16 +5,17 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "kysely-introspect": "kysely-codegen"
+    "kysely-introspect": "kysely-codegen --dialect postgres"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@sequelize/postgres": "^7.0.0-alpha.43",
     "discord.js": "^14.16.3",
     "dotenv": "^16.4.5",
-    "kysely": "^0.27.4",
     "pg": "^8.13.1",
+    "pg-hstore": "^2.3.4",
+    "sequelize": "^6.37.5",
+    "sequelize-auto": "^0.8.8",
     "undici": "^6.20.1"
   },
   "devDependencies": {
