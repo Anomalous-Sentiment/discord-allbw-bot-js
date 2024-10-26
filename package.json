@@ -1,15 +1,23 @@
 {
-  "name": "discord-allbw-bot",
+  "name": "discord-allbw-bot-js",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "kysely-introspect": "kysely-codegen"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@sequelize/postgres": "^7.0.0-alpha.43",
     "discord.js": "^14.16.3",
-    "dotenv": "^16.4.5"
+    "dotenv": "^16.4.5",
+    "kysely": "^0.27.4",
+    "pg": "^8.13.1",
+    "undici": "^6.20.1"
+  },
+  "devDependencies": {
+    "kysely-codegen": "^0.17.0"
   }
 }
