@@ -14,6 +14,14 @@ const ROLE_OPTIONS = [
     {value: 7, name: 'Healer'},
 ]
 
+const LANGAUGES = [
+    {value: 'en', name: 'EN'},
+    {value: 'cn', name: 'CN'},
+    {value: 'tw', name: 'TW'},
+    {value: 'kr', name: 'KR'},
+    {value: 'jp', name: 'JP'},
+]
+
 const ROLE_MAP = new Map(ROLE_OPTIONS.map(({value, name}) => {
     return [value, name]
 }))
@@ -37,7 +45,12 @@ module.exports = {
 			option.setName('role')
 				.setDescription('Used to determine which forms of awakened memoria to show (VG or RG forms)')
 				.addChoices(...ROLE_OPTIONS)
-			),
+			)
+		.addStringOption((option =>
+			option.setName('lang')
+				.setDescription('Language to display memoria data')
+				.addChoices(...LANGAUGES)
+			),),
 	async execute(interaction) {
 		const embedMaxFields = 25
 		const maxEmbedSize = 6000
@@ -47,6 +60,7 @@ module.exports = {
 		const image2 = interaction.options.getAttachment('image2')		
 		const image3 = interaction.options.getAttachment('image3')
 		const role = interaction.options.getInteger('role')
+		const lang = interaction.options.getString('lang')
 		const imgArr = [image1, image2, image3]
 		const fetchPromiseArr = []
 		const analysisPromiseArr = []
@@ -124,7 +138,7 @@ module.exports = {
 		// Use window funciton, over rarity & awakened to get highest form of memo
 
 		// Search DB for matching JP names. Use lang to decide language
-		let memoMatches = await dbGetMemoriaData(uniqueJpNamesArr)
+		let memoMatches = await dbGetMemoriaData(uniqueJpNamesArr, lang ? lang : 'en')
 
 		// Check if role was specified
 		if (role)
@@ -172,7 +186,8 @@ module.exports = {
 		for (let ii = 0; ii < memoMatches.length; ii++) {
 			let memo = memoMatches[ii]
 			let nameStr = `${underline(memo['name'])}`
-			let valueStr = `${hyperlink('Wiki Link', `https://assaultlily.wiki/wiki/Last_Bullet:${memo['name'].split(' ').join('_')}`)}
+			let valueStr = `${hyperlink('Wiki Link', `https://assaultlily.wiki/wiki/Last_Bullet:${memo['en_name'].split(' ').join('_')}`)}
+			${hyperlink('TW DB Link', `https://allb.game-db.tw/memoria/${memo['jp_name']}`)}
 			${hyperlink('Mini DB Link (Slow)', `https://www.mini-allbw-db.dev/card/${memo['unique_id']}`)}
 			${codeBlock(memo['gvg_desc'])}${codeBlock(memo['auto_desc'])}`
 			let newField = {name: nameStr, value: valueStr, inline: true}

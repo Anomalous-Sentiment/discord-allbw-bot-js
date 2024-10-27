@@ -43,9 +43,11 @@ module.exports = {
     },
     dbGetMemoriaData: async (jpNames, lang = 'en') => {
         // Search DB for matching JP names
+        let columns =  ['unique_id', [`${lang}_name`, 'name'], [`gvg_${lang}_name`, 'gvg_name'], [`gvg_${lang}_desc`, 'gvg_desc'], [`auto_${lang}_desc`, 'auto_desc'], 'card_type', 'en_name', 'jp_name', 'awakened', 'super_awakened']
+
 		const memoMatches = await Memoria.findAll({
 			// attributes: { exclude: ['id'] },
-			attributes: ['unique_id', [`${lang}_name`, 'name'], [`gvg_${lang}_name`, 'gvg_name'], [`gvg_${lang}_desc`, 'gvg_desc'], [`auto_${lang}_desc`, 'auto_desc'], 'card_type', 'awakened', 'super_awakened'],
+			attributes: columns,
 			where: {
 				jp_name: jpNames
 			},
