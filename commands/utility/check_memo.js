@@ -1,8 +1,24 @@
-const { SlashCommandBuilder, EmbedBuilder, underline, quote, codeBlock, hideLinkEmbed, hyperlink, embedLength } = require('discord.js');
+const { SlashCommandBuilder, underline, codeBlock, hyperlink, embedLength } = require('discord.js');
 const { fetch } = require('undici');
 const { analyseImage, dbGetMemoriaData } = require('../../helpers/util.js')
 
 console.log(process.env.DATABASE_URL)
+
+const ROLE_OPTIONS = [
+    {value: 1, name: 'R. Single Attacker'},
+    {value: 2, name: 'R. Multi Attacker'},
+    {value: 3, name: 'Sp. Single Attacker'},
+    {value: 4, name: 'Sp. Multi Attacker'},
+    {value: 5, name: 'Buffer'},
+    {value: 6, name: 'Debuffer'},
+    {value: 7, name: 'Healer'},
+]
+
+const ROLE_MAP = new Map(ROLE_OPTIONS.map(({value, name}) => {
+    return [value, name]
+}))
+
+console.log(ROLE_MAP)
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -16,7 +32,12 @@ module.exports = {
 		)
 		.addAttachmentOption(option => 
 			option.setName('image3').setDescription('Third image to analyse')
-		),
+		)
+		.addIntegerOption(option =>
+			option.setName('role')
+				.setDescription('Used to determine which forms of awakened memoria to show (VG or RG forms)')
+				.addChoices(...ROLE_OPTIONS)
+			),
 	async execute(interaction) {
 		const embedMaxFields = 25
 		const maxEmbedSize = 6000
@@ -25,10 +46,27 @@ module.exports = {
 		const image1 = interaction.options.getAttachment('image1')
 		const image2 = interaction.options.getAttachment('image2')		
 		const image3 = interaction.options.getAttachment('image3')
+		const role = interaction.options.getInteger('role')
 		const imgArr = [image1, image2, image3]
 		const fetchPromiseArr = []
 		const analysisPromiseArr = []
 		let uniqueJpNamesArr = []
+		const embedArray = []
+		const awkEmbedArray = []
+		let embedMsgTemplate = {
+			title: 'Normal Memoria',
+			description: 'Assumes evolved forms. Memoria are not displayed in any particular order.',
+			color: 0x0099FF,
+			fields: []
+		}
+
+		let awkEmbedMsgTemplate = {
+			title: 'Detected Possible Awakened Memoria',
+			description: 'Displays memoria that might be awakened and all the possible versions. Only one form of the memoria is actually present in the grid',
+			color: 0xFF0000,
+			fields: []
+		}
+
 
 		for (const img of imgArr)
 		{
@@ -69,8 +107,6 @@ module.exports = {
 		}
 
 		// Send to analyzer
-		// const uniqueJpNamesArr = await analyseImage('memoria', image1Buffer)
-
 		// Wait for all image to be analysed
 		const results = await Promise.all(analysisPromiseArr)
 
@@ -83,32 +119,55 @@ module.exports = {
 		// Filter array to remove duplicates
 		uniqueJpNamesArr = [...new Set(uniqueJpNamesArr)];
 
-
-
-		// Filter results for all unique JP memoria names
-
 		// Filter so memoria only appear once (unique_id)
 		// card_type <= 4 is VG, higher is RG. Use to filter
 		// Use window funciton, over rarity & awakened to get highest form of memo
 
 		// Search DB for matching JP names. Use lang to decide language
-		const memoMatches = await dbGetMemoriaData(uniqueJpNamesArr)
-		// console.log(memoMatches)
-		const embedArray = []
-		const awkEmbedArray = []
-		var embedMsg = {
-			title: 'Detected Memoria',
-			description: 'Assumes evolved forms. Memoria are not displayed in any particular order.',
-			color: 0x0099FF,
-			fields: []
+		let memoMatches = await dbGetMemoriaData(uniqueJpNamesArr)
+
+		// Check if role was specified
+		if (role)
+		{
+			// Filter awakened & super awakened memoria according to role
+			// Define a function for checking whether RG or VG memo
+			// Initially set to check for VG
+			let roleCheckFunc = (type) => type < 5
+
+			if (role >= 5)
+			{
+				// If role is RG, change function to check for RG memo
+				roleCheckFunc = (type) => type >= 5
+			}
+
+			// Apply filter based on role
+			memoMatches = memoMatches.filter(memo => {
+				if (memo['awakened'] && roleCheckFunc(memo['card_type']))
+				{
+					// If awakened, return the RG form of the memoria
+					return memo
+				}
+				else if (memo['super_awakened'] && (memo['card_type'] == role))
+				{
+					// If super awakened, return the memoria that matches their role
+					return memo
+				}
+				else if (!memo['awakened'] && !memo['super_awakened'])
+				{
+					// Return memo if not awakened or super awakened
+					return memo
+				}
+				// Otherwise, ignore
+			})
+
+			// change awk embed title and descriptions
+			awkEmbedMsgTemplate.title = `Awakened Memoria (${ROLE_MAP.get(role)} Forms)`
+			awkEmbedMsgTemplate.description = `Displays awakened for of memoria aligned with your selected role ${ROLE_MAP.get(role)}`
+
 		}
 
-		var awkEmbedMsg = {
-			title: 'Detected Possible Awakened Memoria',
-			description: 'Displays memoria that might be awakened and all the possible versions. Only one form of the memoria is actually present in the grid',
-			color: 0xFF0000,
-			fields: []
-		}
+		let embedMsg = structuredClone(embedMsgTemplate)
+		let awkEmbedMsg = structuredClone(awkEmbedMsgTemplate)
 
 		for (let ii = 0; ii < memoMatches.length; ii++) {
 			let memo = memoMatches[ii]
@@ -203,13 +262,12 @@ module.exports = {
 			{
 				await interaction.followUp({ embeds: [embed] });
 			}
-			// await interaction.editReply({ embeds: embedArray });
 
 			for(const embed of awkEmbedArray)
 			{
 				await interaction.followUp({ embeds: [embed]})
 			}
-			// await interaction.followUp({ embeds: awkEmbedArray})
+
 
 		}
 		else
