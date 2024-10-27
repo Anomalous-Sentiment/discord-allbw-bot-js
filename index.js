@@ -51,6 +51,13 @@ client.on(Events.InteractionCreate, async interaction => {
 			await interaction.reply({ content: 'There was an error while executing this command!', ephemeral: true });
 		}
 	}
+    finally {
+        // Close client if on serverless deployment
+        if(process.env.SERVERLESS == 'true')
+        {
+            setTimeout(() => client.destroy(), 1200)
+        }
+    }
 });
 
 // When the client is ready, run this code (only once).
