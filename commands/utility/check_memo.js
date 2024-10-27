@@ -1,4 +1,4 @@
-const { SlashCommandBuilder, EmbedBuilder, underline, quote, codeBlock, hideLinkEmbed, hyperlink } = require('discord.js');
+const { SlashCommandBuilder, EmbedBuilder, underline, quote, codeBlock, hideLinkEmbed, hyperlink, embedLength } = require('discord.js');
 const { fetch } = require('undici');
 const { analyseImage, dbGetMemoriaData } = require('../../helpers/util.js')
 
@@ -18,6 +18,8 @@ module.exports = {
 			option.setName('image3').setDescription('Third image to analyse')
 		),
 	async execute(interaction) {
+		const embedMaxFields = 25
+		const maxEmbedSize = 6000
 		const t0 = performance.now();
 		await interaction.deferReply();
 		const image1 = interaction.options.getAttachment('image1')
@@ -94,9 +96,7 @@ module.exports = {
 		// console.log(memoMatches)
 		const embedArray = []
 		const awkEmbedArray = []
-		var embedMsg = null
-
-		embedMsg = {
+		var embedMsg = {
 			title: 'Detected Memoria',
 			description: 'Assumes evolved forms. Memoria are not displayed in any particular order.',
 			color: 0x0099FF,
@@ -110,7 +110,6 @@ module.exports = {
 			fields: []
 		}
 
-		var embedMaxFields = 25
 		for (let ii = 0; ii < memoMatches.length; ii++) {
 			let memo = memoMatches[ii]
 			let nameStr = `${underline(memo['name'])}`
@@ -134,14 +133,53 @@ module.exports = {
 				}
 				// Add to awakened embed
 				awkEmbedMsg.fields.push(newField)
+
+				// Check if embed exceeds limit
+				if (embedLength(awkEmbedMsg) > maxEmbedSize)
+				{
+					// If exceeded, pop the last fields and create new embed and add the popped field to new embed
+					let lastField = awkEmbedMsg.fields.pop()
+					awkEmbedArray.push(awkEmbedMsg)
+					awkEmbedMsg = {
+						title: 'Detected Awakened Memoria',
+						color: 0xFF0000,
+						fields: [lastField]
+					}
+				}
+
 				
 			}
 			else
 			{
+				if (embedMsg.fields.length != 0 && embedMsg.fields.length % embedMaxFields == 0)
+				{
+					embedArray.push(embedMsg)
+					embedMsg = {
+						title: 'Detected Memoria',
+						description: 'Assumes evolved forms. Memoria are not displayed in any particular order.',
+						color: 0x0099FF,
+						fields: []
+					}
+				}
 				// Assumes will never pass 25 elements. If it does pass, extra checks are needed like for awakened memo above
 				embedMsg.fields.push(newField)
+
+				// Check if embed exceeds limit
+				if (embedLength(embedMsg) > maxEmbedSize)
+				{
+					// If exceeded, pop the last fields and create new embed and add the popped field to new embed
+					let lastField = embedMsg.fields.pop()
+					embedArray.push(embedMsg)
+					embedMsg = {
+						title: 'Detected Memoria',
+						description: 'Assumes evolved forms. Memoria are not displayed in any particular order.',
+						color: 0x0099FF,
+						fields: [lastField]
+					}
+				}
 			}
-		  }
+		}
+
 		if (embedMsg)
 		{
 			// Add final embedMsg to array if it exists
@@ -159,8 +197,19 @@ module.exports = {
 
 		if (memoMatches.length > 0)
 		{
-			await interaction.editReply({ embeds: embedArray });
-			await interaction.followUp({ embeds: awkEmbedArray})
+			// Send the first msg with first embed
+			await interaction.editReply({ embeds: [embedArray.shift()] });
+			for(const embed of embedArray)
+			{
+				await interaction.followUp({ embeds: [embed] });
+			}
+			// await interaction.editReply({ embeds: embedArray });
+
+			for(const embed of awkEmbedArray)
+			{
+				await interaction.followUp({ embeds: [embed]})
+			}
+			// await interaction.followUp({ embeds: awkEmbedArray})
 
 		}
 		else
