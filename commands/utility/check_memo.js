@@ -1,4 +1,4 @@
-const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
+const { SlashCommandBuilder, EmbedBuilder, underline, quote, codeBlock, hideLinkEmbed, hyperlink } = require('discord.js');
 const { fetch } = require('undici');
 const Sequelize = require('sequelize');
 const DataTypes = Sequelize.DataTypes
@@ -49,41 +49,66 @@ module.exports = {
 		// Search DB for matching JP names
 		const memoMatches = await Memoria.findAll({
 			// attributes: { exclude: ['id'] },
-			attributes: ['en_name', 'gvg_en_name', 'gvg_en_desc'],
+			attributes: ['unique_id', 'en_name', 'gvg_en_name', 'gvg_en_desc', 'auto_en_desc', 'awakened', 'super_awakened'],
 			where: {
 				jp_name: jpNames
-			}
+			},
+			order: [
+				['unique_id', 'DESC'],
+			]
 		})
 
 		// console.log(memoMatches)
 		const embedArray = []
+		const awkEmbedArray = []
 		var embedMsg = null
+
+		embedMsg = {
+			title: 'Detected Memoria',
+			description: 'Assumes evolved forms. Memoria are not displayed in any particular order.',
+			color: 0x0099FF,
+			fields: []
+		}
+
+		var awkEmbedMsg = {
+			title: 'Detected Possible Awakened Memoria',
+			description: 'Displays memoria that might be awakened and all the possible versions. Only one form of the memoria is actually present in the grid',
+			color: 0xFF0000,
+			fields: []
+		}
 
 		var embedMaxFields = 25
 		for (let ii = 0; ii < memoMatches.length; ii++) {
 			let memo = memoMatches[ii]
-			// console.log(memo)
-			console.log(ii % embedMaxFields == 0)
-			if (ii % embedMaxFields == 0)
-			{
-				// Push the old embed onto array and create a new embed if limit is reached
-				if (embedMsg)
-				{
-					embedArray.push(embedMsg)
-				}
-				embedMsg = {
-					title: 'Detected Memoria',
-					color: 0x0099FF,
-					fields: []
-				}
-				
 
-				// embedMsg = new EmbedBuilder()
-				// embedMsg.setTitle('Detected Memoria')
-				// .setColor(0x0099FF)
+			let nameStr = `${underline(memo['en_name'])}`
+			let valueStr = `${hyperlink('Wiki Link', `https://assaultlily.wiki/wiki/Last_Bullet:${memo['en_name'].split(' ').join('_')}`)}
+			${hyperlink('Mini DB Link (Slow)', `https://www.mini-allbw-db.dev/card/${memo['unique_id']}`)}
+			${codeBlock(memo['gvg_en_desc'])}${codeBlock(memo['auto_en_desc'])}`
+			let newField = {name: nameStr, value: valueStr, inline: true}
+
+			// Check if awakened/super awakened
+			if (memo['awakened'] || memo['super_awakened'])
+			{
+				if (awkEmbedMsg.fields.length != 0 && awkEmbedMsg.fields.length % embedMaxFields == 0)
+				{
+					// Push the old embed onto array and create a new embed if limit is reached
+					awkEmbedArray.push(awkEmbedMsg)
+					awkEmbedMsg = {
+						title: 'Detected Awakened Memoria',
+						color: 0xFF0000,
+						fields: []
+					}
+				}
+				// Add to awakened embed
+				awkEmbedMsg.fields.push(newField)
+				
 			}
-			// embedMsg.addFields({name: memo['en_name'], value: memo['gvg_en_name']})
-			embedMsg.fields.push({name: memo['en_name'], value: memo['gvg_en_desc'], inline: true})
+			else
+			{
+				// Assumes will never pass 25 elements. If it does pass, extra checks are needed like for awakened memo above
+				embedMsg.fields.push(newField)
+			}
 		  }
 
 		console.log(embedArray)
@@ -94,15 +119,16 @@ module.exports = {
 			embedArray.push(embedMsg)
 		}
 
-		// for (const memo of memoMatches)
-		// {
-		// 	console.log(memo)
-		// 	embedMsg.addFields({name: memo['en_name'], value: memo['gvg_en_name']})
-		// }
+		if (awkEmbedMsg)
+		{
+			// Add final awkEmbedMsg to array if it exists
+			awkEmbedArray.push(awkEmbedMsg)
+		}
 
 		if (memoMatches.length > 0)
 		{
 			await interaction.editReply({ embeds: embedArray });
+			await interaction.followUp({ embeds: awkEmbedArray})
 
 		}
 		else
