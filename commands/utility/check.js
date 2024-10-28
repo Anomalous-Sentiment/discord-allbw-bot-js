@@ -81,7 +81,7 @@ module.exports = {
 				)
 				.addStringOption((option =>
 					option.setName('lang')
-						.setDescription('Language to display memoria data')
+						.setDescription('Language to display data in')
 						.addChoices(...LANGAUGES)
 					))
 			),
