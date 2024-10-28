@@ -91,8 +91,12 @@ class MemoriaAnalyser extends Analyser {
 
 		for (let ii = 0; ii < unformattedData.length; ii++) {
 			let memo = unformattedData[ii]
+            let attributeEmoji = this.emojiMap.get(`attribute_${memo['attribute']}`) ? this.emojiMap.get(`attribute_${memo['attribute']}`) : ''
+            let roleEmoji = this.emojiMap.get(`role_${memo['card_type']}`) ? this.emojiMap.get(`role_${memo['card_type']}`) : ''
 			let nameStr = `${underline(memo['name'])}`
-			let valueStr = `${hyperlink('Wiki Link', `https://assaultlily.wiki/wiki/Last_Bullet:${memo['en_name'].split(' ').join('_')}`)}
+
+			let valueStr = `${attributeEmoji} ${roleEmoji}
+            ${hyperlink('Wiki Link', `https://assaultlily.wiki/wiki/Last_Bullet:${memo['en_name'].split(' ').join('_')}`)}
 			${hyperlink('TW DB Link', `https://allb.game-db.tw/memoria/${memo['jp_name'].split(' ').join('_')}`)}
 			${hyperlink('Mini DB Link (Slow)', `https://www.mini-allbw-db.dev/card/${memo['unique_id']}`)}
 			${codeBlock(memo['gvg_desc'].replace(/\\n/g,'\n'))}${codeBlock(memo['auto_desc'].replace(/\\n/g,'\n'))}`

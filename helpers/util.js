@@ -44,7 +44,7 @@ module.exports = {
     },
     dbGetMemoriaData: async (jpNames, lang = 'en') => {
         // Search DB for matching JP names
-        let columns =  ['unique_id', [`${lang}_name`, 'name'], [`gvg_${lang}_name`, 'gvg_name'], [`gvg_${lang}_desc`, 'gvg_desc'], [`auto_${lang}_desc`, 'auto_desc'], 'card_type', 'en_name', 'jp_name', 'awakened', 'super_awakened']
+        let columns =  ['unique_id', [`${lang}_name`, 'name'], [`gvg_${lang}_name`, 'gvg_name'], [`gvg_${lang}_desc`, 'gvg_desc'], [`auto_${lang}_desc`, 'auto_desc'], 'card_type', 'attribute', 'en_name', 'jp_name', 'awakened', 'super_awakened']
 
 		const memoMatches = await Memoria.findAll({
 			// attributes: { exclude: ['id'] },
@@ -83,5 +83,24 @@ module.exports = {
         })
 
         return orderMatches
+    },
+    fetchEmojiMap: async (interaction) => {
+		const emojiMap = await interaction.client.application.emojis.fetch()
+			.then(emojis => {
+				// Create a map of the emojis by name
+				const newMap = new Map(emojis.map((applicationEmoji) => {
+					// console.log(applicationEmoji)
+					return [applicationEmoji.name, applicationEmoji]
+				}))
+				return newMap
+
+			})
+			.catch(err => {
+				console.log(err)
+				// Log the error and return an empty map
+				return new Map()
+			})
+
+        return emojiMap
     }
 };

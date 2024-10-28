@@ -1,5 +1,5 @@
 const { fetch } = require('undici');
-const { analyseImage } = require('../helpers/util.js')
+const { analyseImage, fetchEmojiMap } = require('../helpers/util.js')
 
 class Analyser {
 	constructor(imgArr, lang, role, interaction)
@@ -9,23 +9,27 @@ class Analyser {
 		this.role = role
 		this.interaction = interaction
 		this.arrayBuffers = []
+        this.emojiMap = new Map()
 	}
 
 	async start()
 	{
 		let dbData = []
 		let jpNames = []
+        let emojiMapPromise = fetchEmojiMap(this.interaction)
 
 		// Get discord attachments as binary data
 		await this.getData()
 
 		// Send the binary data through the API for analysis
 		jpNames = await this.analyseData()
-        console.log(jpNames)
 
 		// Using the returned data (List of JP names detected), retrieve the associated data from out database
 		dbData = await this.getDbData(jpNames)
 
+
+        // Wait for emojimap promise to resolve before formatting data
+        this.emojiMap = await emojiMapPromise
 		// Format the data returned from our database and save to class variable
 		this.formatResults(dbData)
 
