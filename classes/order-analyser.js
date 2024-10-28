@@ -45,7 +45,7 @@ class OrderAnalyser extends Analyser {
             let nameStr = orderData['order_name']
             let valueStr = `${bold(underline(orderData['skill_name']))}
             ${hyperlink('TW DB Link', `https://allb.game-db.tw/order/${orderData['jp_tactic_name']}`)}
-            ${codeBlock(orderData['skill_desc'])}`
+            ${codeBlock(orderData['skill_desc'].replace(/\\n/g,'\n'))}`
             let newField = { name: nameStr, value: valueStr, inline: true }
 
             
