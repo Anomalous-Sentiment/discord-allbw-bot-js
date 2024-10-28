@@ -2,6 +2,7 @@ const Sequelize = require('sequelize');
 const DataTypes = Sequelize.DataTypes
 const sequelize = new Sequelize(process.env.DATABASE_URL);
 var Memoria = require('../models/maxed_memoria.js')(sequelize, DataTypes);
+var Orders = require('../models/combined_orders.js')(sequelize, DataTypes);
 
 module.exports = {
 	analyseImage: async (cardType, imageBuffer) => {
@@ -57,5 +58,30 @@ module.exports = {
             raw: true,
 		})
         return memoMatches
+    },
+    dbGetOrderData: async (jpNames, lang = 'en') => {
+        let columns = [
+            'unique_id',
+            [`${lang}_tactic_name`, 'order_name'],
+            [`${lang}_effect_name`, 'skill_name'],
+            [`${lang}_effect_desc`, 'skill_desc'],
+            'sp',
+            'preparation_time',
+            'effect_time',
+            'jp_tactic_name'
+        ]
+
+        const orderMatches = await Orders.findAll({
+            attributes: columns,
+            where: {
+				jp_tactic_name: jpNames
+			},
+			order: [
+				['unique_id', 'DESC'],
+			],
+            raw: true,
+        })
+
+        return orderMatches
     }
 };
