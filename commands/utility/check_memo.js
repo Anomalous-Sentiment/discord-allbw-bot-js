@@ -70,6 +70,10 @@ module.exports = {
 		await analyser.start()
 
 		const t1 = performance.now();
+		if (!interaction.replied)
+		{
+			throw new Error('Execution finished but failed to respond to interaction!')
+		}
 		console.log(`Execution took ${t1 - t0} milliseconds.`);
 	},
 };
