@@ -7,7 +7,9 @@
     "dev": "node -r dotenv/config ./index.js",
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev-introspect": "node -r dotenv/config ./sequelize-introspect.js",
+    "dev-deploy-commands": "node -r dotenv/config deploy-commands.js",
     "prod-introspect": "dotenvx run --env-file=prod.env -- node -r dotenv/config  ./sequelize-introspect.js",
+    "prod-deploy-commands": "dotenvx run --env-file=prod.env -- node -r dotenv/config deploy-commands-global.js",
     "start": "dotenvx run --env-file=prod.env -- node -r dotenv/config ./index.js"
   },
   "author": "",
