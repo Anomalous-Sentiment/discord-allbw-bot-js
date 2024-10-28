@@ -2,8 +2,10 @@
 
 A project for creating a discord bot with convenience functions relating to the game Assault Lily Last Bullet W
 
-## Planned Functionality
-- Grid analyser (Memoria + Orders)
+## Functionality
+- Memoria & Order Detection
+    - Uses the API at https://tooler.tokyo/recognizer to recognise and detect memoria & orders
+    - Combines list of detections with own database to provide more information
 
 ## Prerequisites
 
