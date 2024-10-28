@@ -19,3 +19,6 @@ Assuming you have setup the database, follow these steps:
 4. Deploy and update slash commands. Use `npm run dev-deploy-commands` to update the dev version of bot, or `npm run prod-deploy-commands` to update commands of the production bot.
 5. Run `npm run dev` to start the bot using dev environment variables. Alternatively, use `npm run start` to start the bot using production environment variables
 
+## Video Demo
+
+https://github.com/user-attachments/assets/f21edd6a-9ae5-4670-a82a-8b87edcaa78c
