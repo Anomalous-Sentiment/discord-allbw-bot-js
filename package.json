@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "node -r dotenv/config ./index.js",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "introspect": "node ./sequelize-introspect.js",
+    "dev-introspect": "node -r dotenv/config ./sequelize-introspect.js",
+    "prod-introspect": "dotenvx run --env-file=prod.env -- node -r dotenv/config  ./sequelize-introspect.js",
     "start": "dotenvx run --env-file=prod.env -- node -r dotenv/config ./index.js"
   },
   "author": "",
