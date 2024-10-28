@@ -20,7 +20,8 @@ class Analyser {
 		await this.getData()
 
 		// Send the binary data through the API for analysis
-		jpNames = await this.analyseData(this.arrayBuffers)
+		jpNames = await this.analyseData()
+        console.log(jpNames)
 
 		// Using the returned data (List of JP names detected), retrieve the associated data from out database
 		dbData = await this.getDbData(jpNames)
@@ -69,7 +70,7 @@ class Analyser {
 	{
 		let analysisPromiseArr = []
 		let uniqueJpNamesArr = []
-		console.log(`Analysing data of type: ${type}...`)
+		console.log(`Analysing data ...`)
 		for (const arrayBuffer of this.arrayBuffers)
 			{
 				// Create a promise to analyse image for each arrayBufferArr
@@ -77,7 +78,7 @@ class Analyser {
 				{
 					// Create promise to fetch image if image exists
 					// Returns as arrayBuffer
-					analysisPromiseArr.push(analyseImage('memoria', arrayBuffer))
+					analysisPromiseArr.push(analyseImage(type, arrayBuffer))
 				}
 	
 			}
