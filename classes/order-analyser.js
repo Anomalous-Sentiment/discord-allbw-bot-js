@@ -1,4 +1,4 @@
-const { underline, codeBlock, hyperlink, embedLength, bold } = require('discord.js');
+const { underline, codeBlock, hyperlink, embedLength, bold, italic } = require('discord.js');
 const { ROLE_MAP, MAX_EMBED_FIELDS, MAX_EMBED_SIZE } = require('../helpers/constants.js')
 const { dbGetOrderData } = require('../helpers/util.js')
 const { Analyser } = require('../classes/analyser.js')
@@ -43,7 +43,10 @@ class OrderAnalyser extends Analyser {
         {
             // Create new field for order
             let nameStr = orderData['order_name']
-            let valueStr = `${bold(underline(orderData['skill_name']))}
+            let valueStr = `${underline(orderData['skill_name'])}
+            ${italic('SP Cost:')} ${orderData['sp']}
+            ${italic('Prep Time (secs):')} ${orderData['preparation_time']}
+            ${italic('Effect Time (secs):')} ${orderData['effect_time']}
             ${hyperlink('TW DB Link', `https://allb.game-db.tw/order/${orderData['jp_tactic_name']}`)}
             ${codeBlock(orderData['skill_desc'].replace(/\\n/g,'\n'))}`
             let newField = { name: nameStr, value: valueStr, inline: true }
