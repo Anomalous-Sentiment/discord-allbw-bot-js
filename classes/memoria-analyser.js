@@ -93,7 +93,7 @@ class MemoriaAnalyser extends Analyser {
 			let memo = unformattedData[ii]
 			let nameStr = `${underline(memo['name'])}`
 			let valueStr = `${hyperlink('Wiki Link', `https://assaultlily.wiki/wiki/Last_Bullet:${memo['en_name'].split(' ').join('_')}`)}
-			${hyperlink('TW DB Link', `https://allb.game-db.tw/memoria/${memo['jp_name']}`)}
+			${hyperlink('TW DB Link', `https://allb.game-db.tw/memoria/${memo['jp_name'].split(' ').join('_')}`)}
 			${hyperlink('Mini DB Link (Slow)', `https://www.mini-allbw-db.dev/card/${memo['unique_id']}`)}
 			${codeBlock(memo['gvg_desc'])}${codeBlock(memo['auto_desc'])}`
 			let newField = {name: nameStr, value: valueStr, inline: true}
