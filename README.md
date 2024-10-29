@@ -21,7 +21,7 @@ or
 
 ## Prerequisites
 
-- Requires an existing database created and populated from the [ALLBW DB Project](https://github.com/Anomalous-Sentiment/Mini-ALLBW-DB)
+- Requires an existing PostgreSQL database created and populated from the [ALLBW DB Project](https://github.com/Anomalous-Sentiment/Mini-ALLBW-DB)
 
 ## Development Setup
 
