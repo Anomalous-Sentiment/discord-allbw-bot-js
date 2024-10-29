@@ -4,8 +4,20 @@ A project for creating a discord bot with convenience functions relating to the 
 
 ## Functionality
 - Memoria & Order Detection
-    - Uses the API at https://tooler.tokyo/recognizer to recognise and detect memoria & orders
+    - Uses the API at https://tooler.tokyo/recognizer to recognise and detect memoria & orders from image attachments
     - Combines list of detections with own database to provide more information
+
+## Commands and Subcommands
+
+- check
+    - memoria
+    - orders
+
+## Example Bot usage
+
+`/check memoria`
+or
+`/check orders`
 
 ## Prerequisites
 
