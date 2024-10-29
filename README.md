@@ -11,15 +11,23 @@ A project for creating a discord bot with convenience functions relating to the 
 
 - Requires an existing database created and populated from the [ALLBW DB Project](https://github.com/Anomalous-Sentiment/Mini-ALLBW-DB)
 
-## Setup
+## Development Setup
 
 Assuming you have setup the database, follow these steps:
 
-1. Create a `.env` file with all variables filled in, using `example.env` as reference. This will be the used for the dev environment. `prod.env` will have the same structure but will be used for the production environment instead.
+1. Create a `.env` file with all variables filled in, using `example.env` as reference. This will be the used for the dev environment. 
 2. Run `npm install` to install the required packages.
 3. Run `npm run dev-introspect` to generate the models that will be used by sequelize using the dev database. Alternatively, run `npm run prod-introspect` to introspect using production database.
 4. Deploy and update slash commands. Use `npm run dev-deploy-commands` to update the dev version of bot, or `npm run prod-deploy-commands` to update commands of the production bot.
 5. Run `npm run dev` to start the bot using dev environment variables. Alternatively, use `npm run start` to start the bot using production environment variables
+
+## Production Setup
+
+1. Create a `prod.env` file with all variables filled in, using `example.env` as reference. 
+2. Run `npm install` to install the required packages.
+3. Run `npm run prod-introspect` to generate the models that will be used by sequelize using the production database. 
+4. Deploy and update slash commands. Use `npm run prod-deploy-commands` to update the production version of bot
+5. Run `npm run start` to start the bot using production environment variables. 
 
 ## Video Demo
 
