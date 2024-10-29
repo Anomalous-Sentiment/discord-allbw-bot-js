@@ -1,5 +1,5 @@
 // Require the necessary discord.js classes
-const { Client, Events, GatewayIntentBits, Collection } = require('discord.js');
+const { Client, Events, GatewayIntentBits, Collection, ActivityType } = require('discord.js');
 const fs = require('node:fs');
 const path = require('node:path');
 
@@ -64,6 +64,8 @@ client.on(Events.InteractionCreate, async interaction => {
 // It makes some properties non-nullable.
 client.once(Events.ClientReady, readyClient => {
 	console.log(`Ready! Logged in as ${readyClient.user.tag}`);
+    client.user.setActivity({ type: ActivityType.Custom, emoji: '', name: 'Contemplating my usefulness' })
+
 });
 
 // Log in to Discord with your client's token
