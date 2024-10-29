@@ -41,10 +41,6 @@ Assuming you have setup the database, follow these steps:
 4. Deploy and update slash commands. Use `npm run prod-deploy-commands` to update the slash commands used by the production version of bot
 5. Run `npm run start` to start the bot using production environment variables. 
 
-## Video Demo
-
-https://github.com/user-attachments/assets/f21edd6a-9ae5-4670-a82a-8b87edcaa78c
-
 ## Technical Design Notes
 
 Implements the following design patterns:
@@ -54,3 +50,8 @@ Implements the following design patterns:
 - Template Method Pattern
     - Using the Analyser as base class that defines the basic template process for analysing and formatting images.
     - Child classes will override the specific steps with their own implementation depending on the type of entity they are detecting.
+
+## Video Demo
+
+https://github.com/user-attachments/assets/f21edd6a-9ae5-4670-a82a-8b87edcaa78c
+
