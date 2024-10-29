@@ -1,6 +1,8 @@
 const { fetch } = require('undici');
 const { analyseImage, fetchEmojiMap } = require('../helpers/util.js')
 
+// Applying the template design pattern. Other analysers will extend this class
+// Allows children to share the common steps of analysing images
 class Analyser {
 	constructor(imgArr, lang, role, interaction)
 	{

@@ -101,6 +101,10 @@ module.exports = {
 		const lang = interaction.options.getString('lang')
 		const imgArr = [image1, image2, image3, image4, image5, image6, image7, image8, image9]
 		const subcommand = interaction.options.getSubcommand()
+
+		// Applying the strategy design pattern. 
+		// All analyser class extend the Analyser class and share a start() function
+		// Improves modularity and makes it easier to add new commands for analysing different entities in the future
 		const analyserMap = new Map([
 			['memoria', MemoriaAnalyser],
 			['orders', OrderAnalyser]
@@ -109,6 +113,8 @@ module.exports = {
 		// Get the required analyser based on subcommand
 		const analyserClass = analyserMap.get(subcommand)
 		const analyser = new analyserClass(imgArr, lang, role, interaction)
+
+		// Call the start() function which all analysers inherit form the base class
 		await analyser.start()
 
 		const t1 = performance.now();

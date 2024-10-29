@@ -2,6 +2,8 @@ const { underline, codeBlock, hyperlink, embedLength, bold, italic } = require('
 const { ROLE_MAP, MAX_EMBED_FIELDS, MAX_EMBED_SIZE } = require('../helpers/constants.js')
 const { dbGetOrderData } = require('../helpers/util.js')
 const { Analyser } = require('../classes/analyser.js')
+
+// Part of the template design pattern
 class OrderAnalyser extends Analyser {
 	constructor(imgArr, lang, role, interaction)
 	{
