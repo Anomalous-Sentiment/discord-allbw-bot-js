@@ -53,4 +53,4 @@ Implements the following design patterns:
     - To swap analyser algorithms at runtime based on the subcommand received.
 - Template Method Pattern
     - Using the Analyser as base class that defines the basic template process for analysing and formatting images.
-    - Child classes will override the specific steps with their own implementation.
+    - Child classes will override the specific steps with their own implementation depending on the type of entity they or detecting.
