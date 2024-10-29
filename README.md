@@ -29,18 +29,28 @@ Assuming you have setup the database, follow these steps:
 
 1. Create a `.env` file with all variables filled in, using `example.env` as reference. This will be the used for the dev environment. 
 2. Run `npm install` to install the required packages.
-3. Run `npm run dev-introspect` to generate the models that will be used by sequelize using the dev database. Alternatively, run `npm run prod-introspect` to introspect using production database.
-4. Deploy and update slash commands. Use `npm run dev-deploy-commands` to update the dev version of bot, or `npm run prod-deploy-commands` to update commands of the production bot.
-5. Run `npm run dev` to start the bot using dev environment variables. Alternatively, use `npm run start` to start the bot using production environment variables
+3. Run `npm run dev-introspect` to generate the models that will be used by sequelize using the dev database.
+4. Deploy and update slash commands. Use `npm run dev-deploy-commands` to update the slash commands used by the dev version of bot.
+5. Run `npm run dev` to start the bot using dev environment variables.
 
 ## Production Setup
 
 1. Create a `prod.env` file with all variables filled in, using `example.env` as reference. 
 2. Run `npm install` to install the required packages.
 3. Run `npm run prod-introspect` to generate the models that will be used by sequelize using the production database. 
-4. Deploy and update slash commands. Use `npm run prod-deploy-commands` to update the production version of bot
+4. Deploy and update slash commands. Use `npm run prod-deploy-commands` to update the slash commands used by the production version of bot
 5. Run `npm run start` to start the bot using production environment variables. 
 
 ## Video Demo
 
 https://github.com/user-attachments/assets/f21edd6a-9ae5-4670-a82a-8b87edcaa78c
+
+## Technical Design Notes
+
+Implements the following design patterns:
+
+- Strategy Pattern
+    - To swap analyser algorithms at runtime based on the subcommand received.
+- Template Method Pattern
+    - Using the Analyser as base class that defines the basic template process for analysing and formatting images.
+    - Child classes will override the specific steps with their own implementation.
